@@ -142,7 +142,6 @@ function renderNavbar(){
           <a href="index.html" class="nav-logo">
             <img class="nav-logo-img" src="assets/img/logo.png" alt="logo"
               onerror="this.style.display='none'">
-            <span class="nav-logo-text">Multi <span>R</span></span>
           </a>
           <div class="nav-links">${links}</div>
           <div class="nav-right">
@@ -213,7 +212,6 @@ function renderFooter(){
           <div class="footer-brand">
             <div class="footer-logo">
               <img class="footer-logo-img" src="assets/img/logo.png" alt="logo" onerror="this.style.display='none'">
-              <span class="footer-logo-text">${BHUK.site.name}</span>
             </div>
             <div class="footer-newsletter">
               <input type="email" class="footer-email-input" placeholder="Email" id="footer-email">
