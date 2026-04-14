@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Become a Delivery Partner — Bhuk.in</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="navbar-placeholder"></div>
+<div class="form-page">
+  <div class="form-main">
+    <div class="form-card" style="max-width:520px">
+      <div class="form-title" id="dtitle">Become our delivery partner</div>
+      <p style="font-size:13px;color:var(--text-light);text-align:center;margin-top:-16px;margin-bottom:24px" id="dsub">Get paid to deliver</p>
+      <form onsubmit="handleDel(event)">
+        <div class="f-row">
+          <div class="f-group"><input type="text" class="f-input" placeholder="First name" required oninput="checkDel()"></div>
+          <div class="f-group"><input type="text" class="f-input" placeholder="Last name" required oninput="checkDel()"></div>
+        </div>
+        <div class="f-group"><input type="email" class="f-input" placeholder="Email address" required oninput="checkDel()"></div>
+        <div class="f-group" id="del-phone"></div>
+        <div class="f-group"><input type="text" class="f-input" placeholder="Complete address" required oninput="checkDel()"></div>
+        <div class="f-group"><input type="password" class="f-input has-icon" id="dpw" placeholder="Password" required oninput="checkDel()"><button type="button" class="f-eye" id="deye" onclick="togglePw('dpw','deye')">👁️</button></div>
+        <div class="f-group"><input type="password" class="f-input" placeholder="Confirm Password" required oninput="checkDel()"></div>
+        <p class="f-legal">By clicking "Submit," you agree to <a href="terms.html">Karenderia General Terms and Conditions</a> and acknowledge you have read the <a href="privacy.html">Privacy Policy</a>.</p>
+        <button type="submit" class="f-submit" id="dbtn">Submit</button>
+      </form>
+    </div>
+  </div>
+</div>
+<div id="footer-placeholder"></div>
+<script src="data/data.js"></script><script src="js/main.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded',()=>{
+    buildPhoneField('del-phone','dphone');
+    document.getElementById('dtitle').textContent=BHUK.delivery.title;
+    document.getElementById('dsub').textContent=BHUK.delivery.subtitle;
+  });
+  function checkDel(){
+    const ok=[...document.querySelectorAll('form input[required]')].every(i=>i.value.trim());
+    document.getElementById('dbtn').classList.toggle('active',ok);
+  }
+  function handleDel(e){
+    e.preventDefault();const btn=document.getElementById('dbtn');
+    btn.textContent='Submitting...';btn.disabled=true;
+    setTimeout(()=>{btn.textContent='✓ Application Received!';setTimeout(()=>{btn.textContent='Submit';btn.disabled=false;},3000);},1000);
+  }
+</script>
+</body></html>

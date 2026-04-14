@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Become a Restaurant Partner — Bhuk.in</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    body{background:var(--white)}
+    .dot{position:absolute;border-radius:50%;pointer-events:none}
+  </style>
+</head>
+<body>
+<div id="navbar-placeholder"></div>
+<section style="position:relative;overflow:hidden;padding:60px 0;background:var(--white)">
+  <div class="dot" style="background:var(--gold);width:12px;height:12px;top:15%;left:3%;opacity:.6"></div>
+  <div class="dot" style="background:var(--gold-dark);width:10px;height:10px;top:70%;left:5%;opacity:.4"></div>
+  <div class="dot" style="background:var(--gold-light);width:14px;height:14px;top:20%;right:5%;opacity:.5"></div>
+  <div class="dot" style="background:var(--navy-soft);width:8px;height:8px;top:55%;right:3%;opacity:.4"></div>
+  <div class="container">
+    <div class="merchant-layout">
+      <div class="reveal-left">
+        <h1 style="font-family:var(--ff-display);font-size:clamp(24px,3.5vw,36px);font-weight:700;color:var(--text-dark);margin-bottom:6px" id="m-title">Become Restaurant partner</h1>
+        <p style="font-size:14px;color:var(--text-light);margin-bottom:28px" id="m-sub">Get a sales boost of up to 30% from takeaways</p>
+        <form id="mform" onsubmit="handleMerchant(event)">
+          <div class="f-group"><input type="text" class="f-input" placeholder="Store name" required oninput="checkM()"></div>
+          <div class="f-group" style="position:relative"><span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-light);font-size:14px">📍</span><input type="text" class="f-input" style="padding-left:38px" placeholder="Store address" required oninput="checkM()"></div>
+          <div class="f-group"><input type="email" class="f-input" placeholder="Email address" required oninput="checkM()"></div>
+          <div class="f-group" id="m-phone"></div>
+          <div class="f-radio-group">
+            <div class="f-radio-group-title">Choose your membership program</div>
+            <label class="f-radio"><input type="radio" name="mem" value="membership"> Membership</label>
+            <label class="f-radio"><input type="radio" name="mem" value="commission"> Commission</label>
+          </div>
+          <p class="f-legal">By clicking "Submit," you agree to <a href="terms.html">Karenderia General Terms and Conditions</a> and acknowledge you have read the <a href="privacy.html">Privacy Policy</a>.</p>
+          <button type="submit" class="f-submit" id="mbtn">Submit</button>
+          <div class="f-bottom" style="margin-top:10px">Already have an account? <a href="login.html">Login here</a></div>
+        </form>
+      </div>
+      <div class="reveal-right">
+        <img class="merchant-hero-img" src="assets/img/merchant-hero.png" alt="Restaurant Partners"
+          onerror="this.src='https://placehold.co/520x500/0A1628/C9A84C?text=Restaurant+Partners'">
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="background:var(--cream-dark)">
+  <div class="container">
+    <h2 class="s-title tc" id="why-title">Why partner with Us?</h2>
+    <div class="why-grid" id="why-grid"></div>
+  </div>
+</section>
+
+<div class="cta-banner">
+  <img class="cta-banner-bg" src="assets/img/merchant-cta-bg.jpg" alt="" onerror="this.style.display='none'">
+  <div class="cta-banner-content">
+    <div class="cta-banner-label">Overtake competitors</div>
+    <div class="cta-banner-title">Become a Multi Restaurant partner today.</div>
+    <a href="#" class="btn btn-white" style="padding:14px 40px;font-size:15px">Join</a>
+  </div>
+</div>
+
+<div id="footer-placeholder"></div>
+<script src="data/data.js"></script><script src="js/main.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded',()=>{
+    buildPhoneField('m-phone','mphone');
+    document.getElementById('m-title').textContent=BHUK.merchant.title;
+    document.getElementById('m-sub').textContent=BHUK.merchant.subtitle;
+    document.getElementById('why-title').textContent=BHUK.merchant.why_title||'Why partner with Us?';
+    document.getElementById('why-grid').innerHTML=BHUK.merchant.benefits.map((b,i)=>`
+      <div class="why-card reveal" style="transition-delay:${i*.1}s">
+        <div class="why-card-emoji">${b.emoji}</div>
+        <div class="why-card-title">${b.title}</div>
+        <div class="why-card-subtitle">${b.subtitle}</div>
+        <div class="why-card-desc">${b.desc}</div>
+      </div>`).join('');
+    setTimeout(initReveal,60);
+  });
+  function checkM(){
+    const ok=[...document.querySelectorAll('#mform input[required]')].every(i=>i.value.trim());
+    document.getElementById('mbtn').classList.toggle('active',ok);
+  }
+  function handleMerchant(e){
+    e.preventDefault();const btn=document.getElementById('mbtn');
+    btn.textContent='Submitting...';btn.disabled=true;
+    setTimeout(()=>{btn.textContent='✓ Application Received!';setTimeout(()=>{btn.textContent='Submit';btn.disabled=false;},3000);},1000);
+  }
+</script>
+</body></html>

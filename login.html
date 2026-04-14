@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Login — Bhuk.in</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="navbar-placeholder"></div>
+<div class="form-page">
+  <div class="form-main">
+    <div class="form-card">
+      <div class="form-title">Login</div>
+      <form onsubmit="handleLogin(event)">
+        <div class="f-group"><input type="text" class="f-input" id="lid" placeholder="Mobile number or email" required oninput="checkForm()"></div>
+        <div class="f-group"><input type="password" class="f-input has-icon" id="lpw" placeholder="Password *" required oninput="checkForm()"><button type="button" class="f-eye" id="leye" onclick="togglePw('lpw','leye')">👁️</button></div>
+        <div class="f-check-row"><label class="f-check-label"><input type="checkbox"> Remember me</label><a href="forgot-password.html" class="f-link">Forgot password?</a></div>
+        <button type="submit" class="f-submit" id="lbtn">Sign in</button>
+      </form>
+      <div class="f-bottom">Don't have an account?<br><a href="register.html">Sign Up</a></div>
+    </div>
+  </div>
+</div>
+<div id="footer-placeholder"></div>
+<script src="data/data.js"></script><script src="js/main.js"></script>
+<script>
+  function checkForm(){
+    const ok=document.getElementById('lid').value.trim()&&document.getElementById('lpw').value.trim();
+    document.getElementById('lbtn').classList.toggle('active',!!ok);
+  }
+  function handleLogin(e){
+    e.preventDefault();const btn=document.getElementById('lbtn');
+    btn.textContent='Signing in...';btn.disabled=true;
+    setTimeout(()=>{btn.textContent='✓ Success!';setTimeout(()=>{btn.textContent='Sign in';btn.disabled=false;},2000);},1000);
+  }
+</script>
+</body></html>

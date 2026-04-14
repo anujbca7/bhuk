@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Register — Bhuk.in</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="navbar-placeholder"></div>
+<div class="form-page">
+  <div class="form-main">
+    <div class="form-card" style="max-width:520px">
+      <div class="form-title">Register</div>
+      <form onsubmit="handleReg(event)">
+        <div class="f-row">
+          <div class="f-group"><input type="text" class="f-input" id="fn" placeholder="First name" required oninput="checkReg()"></div>
+          <div class="f-group"><input type="text" class="f-input" id="ln" placeholder="Last name" required oninput="checkReg()"></div>
+        </div>
+        <div class="f-group"><input type="email" class="f-input" id="em" placeholder="Email address" required oninput="checkReg()"></div>
+        <div class="f-group" id="phone-wrap"></div>
+        <div class="f-group"><input type="password" class="f-input has-icon" id="pw" placeholder="Password" required oninput="checkReg()"><button type="button" class="f-eye" id="eye1" onclick="togglePw('pw','eye1')">👁️</button></div>
+        <div class="f-group"><input type="password" class="f-input" id="pw2" placeholder="Confirm Password" required oninput="checkReg()"></div>
+        <button type="submit" class="f-submit" id="rbtn">Sign Up</button>
+      </form>
+      <div class="f-bottom">Have an account? <a href="login.html">Sign in</a></div>
+    </div>
+  </div>
+</div>
+<div id="footer-placeholder"></div>
+<script src="data/data.js"></script><script src="js/main.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded',()=>buildPhoneField('phone-wrap','ph'));
+  function checkReg(){
+    const ok=['fn','ln','em','pw','pw2'].every(id=>document.getElementById(id)?.value.trim());
+    document.getElementById('rbtn').classList.toggle('active',ok);
+  }
+  function handleReg(e){
+    e.preventDefault();
+    if(document.getElementById('pw').value!==document.getElementById('pw2').value){alert('Passwords do not match');return;}
+    const btn=document.getElementById('rbtn');btn.textContent='Creating...';btn.disabled=true;
+    setTimeout(()=>{btn.textContent='✓ Account Created!';setTimeout(()=>{btn.textContent='Sign Up';btn.disabled=false;},2000);},1000);
+  }
+</script>
+</body></html>

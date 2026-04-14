@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Contact Us — Bhuk.in</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="navbar-placeholder"></div>
+<section style="background:var(--navy-mid);padding:60px 0;position:relative;overflow:hidden">
+  <div style="position:absolute;top:-80px;right:-80px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,.1),transparent 65%)"></div>
+  <div class="container" style="position:relative;z-index:2">
+    <div class="s-label" style="color:rgb(22, 131, 18)">Reach Out</div>
+    <h1 style="font-family:var(--ff-display);font-size:clamp(28px,4vw,46px);font-weight:700;color:var(--white);margin-bottom:8px" id="c-title">Contact Us</h1>
+    <p style="font-size:15px;color:rgba(0, 0, 0, 0.89)" id="c-sub">We'd love to hear from you</p>
+  </div>
+</section>
+<section class="section" style="background:var(--cream)">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="reveal-left">
+        <h2 style="font-family:var(--ff-display);font-size:22px;font-weight:700;color:var(--text-dark);margin-bottom:24px">Send us a Message</h2>
+        <form onsubmit="handleContact(event)">
+          <div class="f-row" style="margin-bottom:16px"><div class="f-group" style="margin-bottom:0"><input type="text" class="f-input" placeholder="First name" required></div><div class="f-group" style="margin-bottom:0"><input type="text" class="f-input" placeholder="Last name" required></div></div>
+          <div class="f-group"><input type="email" class="f-input" placeholder="Email address" required></div>
+          <div class="f-group"><input type="text" class="f-input" placeholder="Subject"></div>
+          <div class="f-group"><textarea class="f-textarea" placeholder="Your message..."></textarea></div>
+          <button type="submit" class="btn btn-gold" style="width:100%;justify-content:center;padding:14px;font-size:15px" id="cbtn">Send Message →</button>
+        </form>
+      </div>
+      <div class="reveal-right">
+        <h2 style="font-family:var(--ff-display);font-size:22px;font-weight:700;color:var(--text-dark);margin-bottom:24px">Contact Information</h2>
+        <p style="font-size:14px;color:var(--text-light);margin-bottom:28px;line-height:1.75">Our support team is available to help with any questions.</p>
+        <div class="contact-info-item"><div class="contact-icon">✉️</div><div><div class="contact-label">Email</div><div class="contact-val" id="c-email"></div></div></div>
+        <div class="contact-info-item"><div class="contact-icon">📞</div><div><div class="contact-label">Phone</div><div class="contact-val" id="c-phone"></div></div></div>
+        <div class="contact-info-item"><div class="contact-icon">📍</div><div><div class="contact-label">Address</div><div class="contact-val" id="c-addr"></div></div></div>
+        <div class="contact-info-item" style="border-bottom:none"><div class="contact-icon">🕐</div><div><div class="contact-label">Hours</div><div class="contact-val" id="c-hours"></div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+<div id="footer-placeholder"></div>
+<script src="data/data.js"></script><script src="js/main.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded',()=>{
+    const c=BHUK.contact;
+    document.getElementById('c-title').textContent=c.title;
+    document.getElementById('c-sub').textContent=c.subtitle;
+    document.getElementById('c-email').textContent=c.email;
+    document.getElementById('c-phone').textContent=c.phone;
+    document.getElementById('c-addr').textContent=c.address;
+    document.getElementById('c-hours').textContent=c.hours;
+    setTimeout(initReveal,60);
+  });
+  function handleContact(e){
+    e.preventDefault();const btn=document.getElementById('cbtn');
+    btn.textContent='Sending...';btn.disabled=true;
+    setTimeout(()=>{btn.textContent='✓ Message Sent!';setTimeout(()=>{btn.textContent='Send Message →';btn.disabled=false;},3000);},1000);
+  }
+</script>
+</body></html>

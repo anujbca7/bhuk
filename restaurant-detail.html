@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Restaurant — Bhuk.in</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    body{background:var(--cream)}
+    .rest-hero{position:relative;height:260px;background:var(--navy);overflow:hidden}
+    .rest-hero-bg{width:100%;height:100%;object-fit:cover}
+    .rest-hero-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(10,22,40,.75),rgba(10,22,40,.2))}
+    .rest-hero-info{position:absolute;bottom:0;left:0;right:0;padding:24px 28px}
+    .rest-hero-name{font-family:var(--ff-display);font-size:30px;font-weight:700;color:var(--white);margin-bottom:10px}
+    .rest-hero-pill{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:var(--radius-full);padding:4px 12px;font-size:12px;font-weight:600;color:var(--white);margin-right:8px;margin-bottom:4px}
+    .rest-hero-open{background:rgba(201,168,76,.25);border-color:rgba(201,168,76,.5)}
+    .detail-layout{display:grid;grid-template-columns:1fr 280px;gap:28px;padding:32px 0 80px;align-items:start}
+    .menu-cat-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
+    .menu-cat-tab{padding:7px 18px;border-radius:var(--radius-full);border:1.5px solid var(--gray-200);background:var(--white);font-size:13px;font-weight:500;color:var(--text-mid);cursor:pointer;transition:var(--transition)}
+    .menu-cat-tab:hover{border-color:var(--gold);color:var(--gold-dark)}
+    .menu-cat-tab.active{background:linear-gradient(135deg,var(--gold-dark),var(--gold));border-color:transparent;color:var(--white);font-weight:600}
+    .menu-section-title{font-family:var(--ff-display);font-size:18px;font-weight:700;color:var(--text-dark);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--gray-200)}
+    .menu-list{display:flex;flex-direction:column;gap:12px}
+    .info-card{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:22px;position:sticky;top:80px}
+    .info-title{font-family:var(--ff-display);font-size:16px;font-weight:700;color:var(--text-dark);margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--gray-200)}
+    .info-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--gray-200);font-size:13px}
+    .info-row:last-of-type{border-bottom:none}
+    .info-label{color:var(--text-light);display:flex;align-items:center;gap:5px}
+    .info-val{font-weight:600;color:var(--text-dark)}
+    @media(max-width:900px){.detail-layout{grid-template-columns:1fr}.info-card{position:static}}
+  </style>
+</head>
+<body>
+<div id="navbar-placeholder"></div>
+<div class="rest-hero">
+  <img class="rest-hero-bg" id="hero-img" src="" alt="" onerror="this.src='https://placehold.co/1200x260/0A1628/C9A84C?text=Restaurant'">
+  <div class="rest-hero-overlay"></div>
+  <div class="rest-hero-info">
+    <div class="rest-hero-name" id="hero-name">Loading...</div>
+    <div id="hero-pills"></div>
+  </div>
+</div>
+<div class="container">
+  <div class="detail-layout">
+    <div>
+      <div class="menu-cat-tabs" id="cat-tabs"></div>
+      <div id="menu-content"></div>
+    </div>
+    <div><div class="info-card" id="info-card"></div></div>
+  </div>
+</div>
+<div id="footer-placeholder"></div>
+<script src="data/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+  let currentRest=null;
+  document.addEventListener('DOMContentLoaded',()=>{
+    const id=new URLSearchParams(location.search).get('id')||'r001';
+    currentRest=BHUK.restaurants.find(r=>r.id===id)||BHUK.restaurants[0];
+    document.title=`${currentRest.name} — Bhuk.in`;
+    buildHero(); buildInfoCard(); buildMenu(null); setTimeout(initReveal,60);
+  });
+
+  function buildHero(){
+    const r=currentRest;
+    document.getElementById('hero-img').src=r.img;
+    document.getElementById('hero-name').textContent=r.name;
+    document.getElementById('hero-pills').innerHTML=`
+      <span class="rest-hero-pill ${r.open?'rest-hero-open':''}">${r.open?'🟢 Open':'🔴 Closed'}</span>
+      <span class="rest-hero-pill">⭐ ${r.rating} (${r.reviews})</span>
+      <span class="rest-hero-pill">⏱️ ${r.delivery_time}</span>
+      <span class="rest-hero-pill">🚚 ${r.delivery_fee}</span>
+      <span class="rest-hero-pill">${r.price_range}</span>
+      ${r.tags.map(t=>`<span class="rest-hero-pill">${t}</span>`).join('')}`;
+  }
+
+  function buildMenu(activeCat){
+    const cats=[...new Set(currentRest.menu.map(m=>m.category))];
+    if(!activeCat) activeCat=cats[0];
+    document.getElementById('cat-tabs').innerHTML=cats.map(cat=>`
+      <button class="menu-cat-tab ${cat===activeCat?'active':''}" onclick="buildMenu('${cat}')">${cat}</button>`).join('');
+    const items=currentRest.menu.filter(m=>m.category===activeCat);
+    document.getElementById('menu-content').innerHTML=`
+      <div class="menu-section-title">${activeCat}</div>
+      <div class="menu-list">${items.map(item=>`
+        <div class="menu-item">
+          <img class="menu-item-img" src="${item.img}" alt="${item.name}" onerror="this.src='https://placehold.co/80x80/F0EBE0/9A7430?text=🍽️'">
+          <div class="menu-item-info">
+            ${item.popular?'<span class="popular-badge">Popular</span>':''}
+            <div class="menu-item-name">${item.name}</div>
+            <div class="menu-item-desc">${item.desc}</div>
+            <div class="menu-item-price">$${item.price.toFixed(2)}</div>
+          </div>
+          <button class="menu-item-add" onclick='addToCart(${JSON.stringify({id:item.id,name:item.name,price:item.price,img:item.img})})'>+</button>
+        </div>`).join('')}
+      </div>`;
+  }
+
+  function buildInfoCard(){
+    const r=currentRest;
+    document.getElementById('info-card').innerHTML=`
+      <div class="info-title">${r.name}</div>
+      <div class="info-row"><span class="info-label">⭐ Rating</span><span class="info-val">${r.rating}/5</span></div>
+      <div class="info-row"><span class="info-label">⏱️ Delivery</span><span class="info-val">${r.delivery_time}</span></div>
+      <div class="info-row"><span class="info-label">🚚 Fee</span><span class="info-val">${r.delivery_fee}</span></div>
+      <div class="info-row"><span class="info-label">🛒 Min Order</span><span class="info-val">${r.min_order}</span></div>
+      <div class="info-row"><span class="info-label">💰 Price</span><span class="info-val">${r.price_range}</span></div>
+      <div class="info-row"><span class="info-label">📍 Address</span><span class="info-val">${r.address}</span></div>
+      <div class="info-row"><span class="info-label">Status</span><span class="info-val" style="color:${r.open?'var(--gold-dark)':'#f44336'}">${r.open?'Open Now':'Closed'}</span></div>
+      <button class="btn btn-gold" style="width:100%;justify-content:center;margin-top:16px;padding:13px" onclick="openCart()">🛒 View Cart</button>`;
+  }
+</script>
+</body></html>

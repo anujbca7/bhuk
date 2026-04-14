@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bhuk.in — Let's find best food for you</title>
+  <meta name="description" content="Order delicious food from the comfort of your home. Explore our restaurant food ordering website now!">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Decorative dots matching original bhuk.in screenshots */
+    .dot{position:absolute;border-radius:50%;pointer-events:none}
+  </style>
+</head>
+<body>
+
+  <div id="navbar-placeholder"></div>
+
+  <!-- ══════════════════════════════════════════════════════
+       HERO
+  ══════════════════════════════════════════════════════ -->
+  <section class="hero">
+    <img class="hero-img-left"  src="assets/img/hero-left.png"  alt=""
+      onerror="this.style.display='none'">
+    <img class="hero-img-right" src="assets/img/hero-right.png" alt=""
+      onerror="this.style.display='none'">
+
+    <!-- Dots matching screenshot -->
+    <div class="dot" style="width:10px;height:10px;background:var(--gold);top:22%;left:7%;opacity:.7"></div>
+    <div class="dot" style="width:8px;height:8px;background:var(--gold-dark);top:60%;left:17%;opacity:.4"></div>
+    <div class="dot" style="width:12px;height:12px;background:var(--gold-light);top:28%;right:18%;opacity:.6"></div>
+    <div class="dot" style="width:7px;height:7px;background:var(--navy-soft);top:65%;right:8%;opacity:.5"></div>
+    <div class="dot" style="width:6px;height:6px;background:var(--gold);top:14%;left:38%;opacity:.35"></div>
+
+    <div class="container">
+      <div class="hero-inner">
+        <div class="hero-content">
+          <h1 class="hero-title">Let's find best food for you</h1>
+          <div class="hero-search">
+            <button class="hero-search-loc" title="Use my location" onclick="getLocation()">📍</button>
+            <input type="text" class="hero-search-input" id="hero-input"
+              placeholder="Enter your street and house number"
+              onkeydown="if(event.key==='Enter') doSearch()">
+            <button class="hero-search-btn" onclick="doSearch()">→</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       YOUR FAVOURITE CUISINES
+  ══════════════════════════════════════════════════════ -->
+  <section class="cuisines-section">
+    <div class="container">
+      <h2 class="cuisines-title">Your favorite cuisines</h2>
+      <div class="cuisines-track-wrap">
+        <button class="carousel-arrow prev" onclick="slideCuisines(-1)">←</button>
+        <div class="cuisines-track" id="cuisines-track"></div>
+        <button class="carousel-arrow next" onclick="slideCuisines(1)">→</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       JOIN KARENDERIA — 3 cards
+  ══════════════════════════════════════════════════════ -->
+  <section class="join-section">
+    <div class="container">
+      <h2 class="join-title">Join <span class="hi">Karenderia</span></h2>
+      <!-- Cards rendered directly — no reveal class to avoid observer timing bug -->
+      <div class="join-grid" id="join-grid"></div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════
+       APP SECTION
+  ══════════════════════════════════════════════════════ -->
+  <section class="app-section">
+    <div class="container">
+      <div class="app-inner">
+        <div class="app-left">
+          <div class="app-label">Best restaurants</div>
+          <div class="app-title">In your pocket</div>
+          <p class="app-desc">Order from your favorite restaurants & track on the go, with the all-new K app.</p>
+          <div class="app-badges" id="app-badges-left"></div>
+        </div>
+        <div style="text-align:center">
+          <img class="app-phone" src="assets/img/mobile-app.png" alt="K App"
+            onerror="this.src='https://placehold.co/200x400/F0EBE0/9A7430?text=App+Preview'">
+        </div>
+        <div class="app-right">
+          <div class="app-label">Download</div>
+          <div class="app-title">K mobile app</div>
+          <div class="app-badges" id="app-badges-right"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="footer-placeholder"></div>
+
+  <!-- ── SCRIPTS ─────────────────────────────────────────── -->
+  <script src="data/data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    /* Render page content AFTER main.js loads, then call initReveal */
+    document.addEventListener('DOMContentLoaded', function() {
+      renderCuisines();
+      renderJoinCards();
+      renderAppBadges();
+      /* Call initReveal AFTER all content is in DOM */
+      setTimeout(initReveal, 60);
+    });
+
+    /* ── Cuisines ─────────────────────────────────────── */
+    function renderCuisines(){
+      const track = document.getElementById('cuisines-track');
+      if(!track) return;
+      track.innerHTML = BHUK.cuisines.map(c => `
+        <a href="restaurants.html?cuisine=${c.id}" class="cuisine-chip" title="${c.name}">
+          <div class="cuisine-chip-circle">
+            <img src="${c.img}" alt="${c.name}"
+              onerror="this.style.display='none';this.parentElement.innerHTML='<span style=font-size:32px>${c.icon}</span>'">
+          </div>
+          <span class="cuisine-chip-label">${c.name}</span>
+        </a>
+      `).join('');
+    }
+
+    function slideCuisines(dir){
+      const track = document.getElementById('cuisines-track');
+      if(track) track.scrollBy({left: dir*260, behavior:'smooth'});
+    }
+
+    /* ── Join cards ──────────────────────────────────── */
+    function renderJoinCards(){
+      const grid = document.getElementById('join-grid');
+      if(!grid) return;
+      grid.innerHTML = BHUK.join_cards.map((c,i) => `
+        <div class="join-card" style="animation:fadeInUp .5s ease ${i*0.12}s both">
+          <img class="join-card-img" src="${c.img}" alt="${c.title}"
+            onerror="this.src='https://placehold.co/400x225/F0EBE0/9A7430?text=${encodeURIComponent(c.title)}'">
+          <div class="join-card-body">
+            <div class="join-card-title">${c.title}</div>
+            <div class="join-card-desc">${c.desc}</div>
+            <a href="${c.link}" class="join-card-btn">${c.cta}</a>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    /* ── App badges ──────────────────────────────────── */
+    function renderAppBadges(){
+      const a = BHUK.app;
+      const html = `
+        <a href="${a.appstore_link}" class="app-badge">
+          <img src="${a.appstore_img}" alt="App Store"
+            onerror="this.src='https://placehold.co/130x40/000/fff?text=App+Store'">
+        </a>
+        <a href="${a.playstore_link}" class="app-badge">
+          <img src="${a.playstore_img}" alt="Google Play"
+            onerror="this.src='https://placehold.co/130x40/000/fff?text=Google+Play'">
+        </a>`;
+      const bl = document.getElementById('app-badges-left');
+      const br = document.getElementById('app-badges-right');
+      if(bl) bl.innerHTML = html;
+      if(br) br.innerHTML = html;
+    }
+
+    /* ── Hero search ─────────────────────────────────── */
+    function doSearch(){
+      const val = document.getElementById('hero-input').value.trim();
+      window.location.href = val
+        ? `restaurants.html?address=${encodeURIComponent(val)}`
+        : 'restaurants.html';
+    }
+
+    function getLocation(){
+      if(!navigator.geolocation) return;
+      navigator.geolocation.getCurrentPosition(pos => {
+        document.getElementById('hero-input').value =
+          `${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`;
+      }, ()=>{});
+    }
+  </script>
+
+  <!-- Inline keyframe for join cards (no observer needed) -->
+  <style>
+    @keyframes fadeInUp{
+      from{opacity:0;transform:translateY(28px)}
+      to{opacity:1;transform:translateY(0)}
+    }
+  </style>
+</body>
+</html>

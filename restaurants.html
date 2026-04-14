@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Restaurants — Bhuk.in</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    body{background:var(--cream)}
+    .page-layout{display:grid;grid-template-columns:260px 1fr;gap:28px;padding:36px 0 80px;align-items:start}
+    .toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+    .results-count{font-size:14px;color:var(--text-light)}
+    .results-count strong{color:var(--text-dark);font-weight:700}
+    .sort-select{padding:8px 14px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);font-size:13px;color:var(--text-dark);background:var(--white);outline:none;cursor:pointer}
+    .sort-select:focus{border-color:var(--gold)}
+    .restaurants-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+    @media(max-width:1000px){.page-layout{grid-template-columns:1fr}.filter-box{display:none}.restaurants-grid{grid-template-columns:1fr 1fr}}
+    @media(max-width:560px){.restaurants-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div id="navbar-placeholder"></div>
+
+<div class="cuisine-strip">
+  <div class="container">
+    <div class="cuisine-strip-inner" id="cuisine-strip"></div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="page-layout">
+    <aside class="filter-box">
+      <div class="filter-box-title">Filters</div>
+      <div class="filter-group">
+        <div class="filter-group-title">Rating</div>
+        <label class="filter-opt"><input type="checkbox" value="4.5" onchange="applyFilters()"><label>4.5+ ★★★★★</label></label>
+        <label class="filter-opt"><input type="checkbox" value="4"   onchange="applyFilters()"><label>4.0+ ★★★★</label></label>
+        <label class="filter-opt"><input type="checkbox" value="3.5" onchange="applyFilters()"><label>3.5+ ★★★</label></label>
+      </div>
+      <div class="filter-group">
+        <div class="filter-group-title">Delivery</div>
+        <label class="filter-opt"><input type="checkbox" value="free" onchange="applyFilters()"><label>Free Delivery</label></label>
+        <label class="filter-opt"><input type="checkbox" value="fast" onchange="applyFilters()"><label>Under 30 min</label></label>
+      </div>
+      <div class="filter-group">
+        <div class="filter-group-title">Price Range</div>
+        <label class="filter-opt"><input type="checkbox" value="$"    onchange="applyFilters()"><label>$ Budget</label></label>
+        <label class="filter-opt"><input type="checkbox" value="$$"   onchange="applyFilters()"><label>$$ Mid-range</label></label>
+        <label class="filter-opt"><input type="checkbox" value="$$$"  onchange="applyFilters()"><label>$$$ Premium</label></label>
+        <label class="filter-opt"><input type="checkbox" value="$$$$" onchange="applyFilters()"><label>$$$$ Fine Dining</label></label>
+      </div>
+      <div class="filter-group">
+        <div class="filter-group-title">Status</div>
+        <label class="filter-opt"><input type="checkbox" value="open" onchange="applyFilters()"><label>Open Now</label></label>
+      </div>
+      <button class="filter-apply" onclick="clearFilters()">Clear All</button>
+    </aside>
+    <div>
+      <div class="toolbar">
+        <div class="results-count" id="results-count">Loading...</div>
+        <select class="sort-select" onchange="sortBy=this.value;applyFilters()">
+          <option value="rating">Top Rated</option>
+          <option value="fast">Fastest Delivery</option>
+          <option value="price_low">Price: Low to High</option>
+          <option value="price_high">Price: High to Low</option>
+        </select>
+      </div>
+      <div class="restaurants-grid" id="rest-grid"></div>
+    </div>
+  </div>
+</div>
+
+<div id="footer-placeholder"></div>
+<script src="data/data.js"></script>
+<script src="js/main.js"></script>
+<script>
+  let activeCuisine='all', sortBy='rating';
+  document.addEventListener('DOMContentLoaded',()=>{
+    const params=new URLSearchParams(location.search);
+    activeCuisine=params.get('cuisine')||'all';
+    buildStrip(); applyFilters(); setTimeout(initReveal,60);
+  });
+
+  function buildStrip(){
+    const s=document.getElementById('cuisine-strip');
+    s.innerHTML=`<a href="restaurants.html" class="cuisine-pill ${activeCuisine==='all'?'active':''}">🍽️ All</a>`
+      +BHUK.cuisines.map(c=>`<a href="restaurants.html?cuisine=${c.id}" class="cuisine-pill ${activeCuisine===c.id?'active':''}">${c.icon} ${c.name}</a>`).join('');
+  }
+
+  function getFiltered(){
+    let data=BHUK.restaurants;
+    if(activeCuisine!=='all') data=data.filter(r=>r.cuisine.includes(activeCuisine));
+    const rChecked=[...document.querySelectorAll('.filter-opt input[value="4.5"],.filter-opt input[value="4"],.filter-opt input[value="3.5"]')].filter(i=>i.checked).map(i=>parseFloat(i.value));
+    if(rChecked.length){ const m=Math.min(...rChecked); data=data.filter(r=>r.rating>=m); }
+    if(document.querySelector('.filter-opt input[value="free"]')?.checked) data=data.filter(r=>r.delivery_fee==='Free');
+    if(document.querySelector('.filter-opt input[value="fast"]')?.checked) data=data.filter(r=>parseInt(r.delivery_time)<=30);
+    const pChecked=[...document.querySelectorAll('.filter-opt input[value="$"],.filter-opt input[value="$$"],.filter-opt input[value="$$$"],.filter-opt input[value="$$$$"]')].filter(i=>i.checked).map(i=>i.value);
+    if(pChecked.length) data=data.filter(r=>pChecked.includes(r.price_range));
+    if(document.querySelector('.filter-opt input[value="open"]')?.checked) data=data.filter(r=>r.open);
+    if(sortBy==='rating') data=[...data].sort((a,b)=>b.rating-a.rating);
+    else if(sortBy==='fast') data=[...data].sort((a,b)=>parseInt(a.delivery_time)-parseInt(b.delivery_time));
+    else if(sortBy==='price_low') data=[...data].sort((a,b)=>a.price_range.length-b.price_range.length);
+    else if(sortBy==='price_high') data=[...data].sort((a,b)=>b.price_range.length-a.price_range.length);
+    return data;
+  }
+
+  function applyFilters(){
+    const data=getFiltered();
+    const c=BHUK.cuisines.find(c=>c.id===activeCuisine);
+    const rc=document.getElementById('results-count');
+    rc.innerHTML = c&&activeCuisine!=='all'
+      ? `<strong style="color:var(--gold-dark)">${c.name}</strong> &nbsp;·&nbsp; <strong>${data.length}</strong> restaurant${data.length!==1?'s':''}`
+      : `Showing <strong>${data.length}</strong> restaurant${data.length!==1?'s':''}`;
+    const grid=document.getElementById('rest-grid');
+    if(!data.length){
+      grid.innerHTML=`<div style="grid-column:1/-1;padding:80px 20px;text-align:center">
+        <div style="font-family:var(--ff-display);font-size:26px;font-weight:700;color:var(--text-dark);margin-bottom:8px">${c?c.name:'Results'}</div>
+        <div style="font-size:18px;color:var(--text-mid);margin-bottom:8px">0 Result(s)</div>
+        <p style="font-size:14px;color:var(--text-light)">No available restaurant with your selected filters.</p>
+        <a href="restaurants.html" class="btn btn-gold" style="margin-top:22px;display:inline-flex">View All</a>
+      </div>`; return;
+    }
+    grid.innerHTML=data.map((r,i)=>`
+      <a href="restaurant-detail.html?id=${r.id}" class="restaurant-card ${r.open?'':'closed'}">
+        ${!r.open?'<div class="rest-closed-badge">Closed</div>':''}
+        <img class="rest-img" src="${r.img}" alt="${r.name}" onerror="this.src='https://placehold.co/400x225/F0EBE0/9A7430?text=${encodeURIComponent(r.name)}'">
+        <div class="rest-body">
+          <div class="rest-name">${r.name}</div>
+          <div class="rest-meta">
+            <span class="rest-rating"><span class="star">★</span> ${r.rating} <span class="rest-reviews">(${r.reviews})</span></span>
+            <span class="rest-time">⏱️ ${r.delivery_time}</span>
+          </div>
+          <div class="rest-tags">${r.tags.map(t=>`<span class="rest-tag">${t}</span>`).join('')}</div>
+          <div class="rest-footer"><span>🚚 ${r.delivery_fee}</span><span>Min: ${r.min_order}</span><span>${r.price_range}</span></div>
+        </div>
+      </a>`).join('');
+    setTimeout(initReveal,50);
+  }
+
+  function clearFilters(){
+    document.querySelectorAll('.filter-opt input').forEach(i=>i.checked=false);
+    applyFilters();
+  }
+</script>
+</body></html>
