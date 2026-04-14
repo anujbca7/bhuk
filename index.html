@@ -99,7 +99,12 @@
       </div>
     </div>
   </section>
+<!-- DYNAMIC SLIDERS -->
+<section id="dynamic-sliders"></section>
+<!-- DYNAMIC FOOD SLIDERS -->
+<section id="food-sliders"></section>
 
+<!-- FOOTER -->
   <div id="footer-placeholder"></div>
 
   <!-- ── SCRIPTS ─────────────────────────────────────────── -->
@@ -111,6 +116,8 @@
       renderCuisines();
       renderJoinCards();
       renderAppBadges();
+      renderAllSliders();
+      renderAllFoodSliders();
       /* Call initReveal AFTER all content is in DOM */
       setTimeout(initReveal, 60);
     });
@@ -185,6 +192,201 @@
           `${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`;
       }, ()=>{});
     }
+
+    // ===============================
+// RENDER ALL SLIDERS
+// ===============================
+function renderAllSliders() {
+  const container = document.getElementById("dynamic-sliders");
+  if (!container) return;
+
+  container.innerHTML = BHUK.sliders.map(s => `
+    <section class="best-section">
+      <div class="container">
+        <h2 class="best-title">${s.title}</h2>
+
+        <div class="best-slider-wrap">
+          <button class="best-arrow prev" onclick="slideBest('${s.id}', -1)">‹</button>
+
+          <div class="best-slider" id="slider-${s.id}"></div>
+
+          <button class="best-arrow next" onclick="slideBest('${s.id}', 1)">›</button>
+        </div>
+      </div>
+    </section>
+  `).join("");
+
+  BHUK.sliders.forEach(s => renderSliderItems(s));
+}
+
+
+// ===============================
+// RENDER ITEMS INSIDE SLIDER
+// ===============================
+function renderSliderItems(config) {
+  const el = document.getElementById(`slider-${config.id}`);
+  if (!el) return;
+
+  let data = [...BHUK.restaurants];
+
+  if (config.type === "reviews") {
+    data.sort((a, b) => b.reviews - a.reviews);
+  }
+
+  if (config.type === "rating") {
+    data.sort((a, b) => b.rating - a.rating);
+  }
+
+  if (config.type === "hybrid") {
+    data.sort((a, b) => (b.rating * b.reviews) - (a.rating * a.reviews));
+  }
+
+  data = data.slice(0, 10);
+
+  el.innerHTML = data.map(r => `
+    <div class="best-card">
+      <div class="best-img-wrap">
+        <img src="${r.img}" alt="${r.name}">
+      </div>
+
+      <div class="best-body">
+        <div class="best-name">${r.name}</div>
+        <div class="best-cuisine">${r.cuisine.join(", ")}</div>
+        <div class="best-rating">⭐ ${r.rating} (${r.reviews})</div>
+      </div>
+    </div>
+  `).join("");
+}
+
+
+// ===============================
+// SLIDER SCROLL
+// ===============================
+function slideBest(id, dir) {
+  const el = document.getElementById(`slider-${id}`);
+  if (el) {
+    el.scrollBy({
+      left: dir * 300,
+      behavior: "smooth"
+    });
+  }
+}
+
+// ===============================
+// RENDER ALL FOOD SLIDERS
+// ===============================
+function renderAllFoodSliders() {
+  const container = document.getElementById("food-sliders");
+  if (!container) return;
+
+  container.innerHTML = BHUK.food_sliders.map(s => `
+    <section class="food-section">
+      <div class="container">
+        <h2 class="food-title">${s.title}</h2>
+
+        <div class="food-slider-wrap">
+          <button class="food-arrow prev" onclick="slideFood('${s.id}', -1)">‹</button>
+
+          <div class="food-slider" id="food-${s.id}"></div>
+
+          <button class="food-arrow next" onclick="slideFood('${s.id}', 1)">›</button>
+        </div>
+      </div>
+    </section>
+  `).join("");
+
+  BHUK.food_sliders.forEach(s => renderFoodItems(s));
+}
+
+
+// ===============================
+// GET ALL FOOD ITEMS
+// ===============================
+function getAllFoodItems() {
+  let items = [];
+
+  BHUK.restaurants.forEach(r => {
+    r.menu.forEach(m => {
+      items.push({
+        ...m,
+        restaurant: r.name
+      });
+    });
+  });
+
+  return items;
+}
+
+
+// ===============================
+// RENDER FOOD ITEMS
+// ===============================
+function renderFoodItems(config) {
+  const el = document.getElementById(`food-${config.id}`);
+  if (!el) return;
+
+  let items = getAllFoodItems();
+
+  // 🔥 FILTER LOGIC
+  switch (config.type) {
+    case "popular":
+      items = items.filter(i => i.popular);
+      break;
+
+    case "price_high":
+      items.sort((a, b) => b.price - a.price);
+      break;
+
+    case "price_low":
+      items.sort((a, b) => a.price - b.price);
+      break;
+  }
+
+  items = items.slice(0, 10);
+
+  el.innerHTML = items.map(item => `
+    <div class="food-card">
+
+      <div class="food-img-wrap">
+        <img src="${item.img}" alt="${item.name}"
+          onerror="this.src='https://placehold.co/400x220/F0EBE0/9A7430?text=${item.name}'">
+      </div>
+
+      <div class="food-body">
+
+        <div class="food-name">${item.name}</div>
+
+        <div class="food-desc">
+          ${item.desc || "Delicious food item"}
+        </div>
+
+        <div class="food-bottom">
+          <div class="food-price">$${item.price}</div>
+
+          <button class="food-add"
+            onclick='addToCart(${JSON.stringify(item)})'>
+            Add
+          </button>
+        </div>
+
+      </div>
+    </div>
+  `).join("");
+}
+
+
+// ===============================
+// SLIDER SCROLL
+// ===============================
+function slideFood(id, dir) {
+  const el = document.getElementById(`food-${id}`);
+  if (el) {
+    el.scrollBy({
+      left: dir * 320,
+      behavior: "smooth"
+    });
+  }
+}
   </script>
 
   <!-- Inline keyframe for join cards (no observer needed) -->

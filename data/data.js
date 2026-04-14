@@ -144,6 +144,27 @@ const BHUK = {
     { title:"Join as a delivery person!",         desc:"Start earning extra income by delivering to homes. Enjoy top rates and great benefits as part of our team.",                     cta:"Register now!",  link:"delivery-signup.html",  img:"assets/img/join-delivery.jpg"   }
   ],
 
+
+sliders: [
+  {
+    id: "seller",
+    title: "Best Seller Restaurants",
+    type: "reviews"
+  },
+  {
+    id: "rating",
+    title: "Top Rated Restaurants",
+    type: "rating"
+  }
+],
+
+food_sliders: [
+  {
+    id: "featured",
+    title: "Featured Items",
+    type: "popular"
+  },
+],
   app: {
     left_label:  "Best restaurants",
     left_title:  "In your pocket",
